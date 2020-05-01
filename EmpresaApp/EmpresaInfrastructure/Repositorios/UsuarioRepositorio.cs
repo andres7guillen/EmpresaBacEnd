@@ -1,4 +1,5 @@
 ﻿using EmpresaData.Context;
+using EmpresaDominio.Entidades.DTO;
 using EmpresaDominio.Entidades.Negocio;
 using EmpresaDominio.Repositorios;
 using Microsoft.EntityFrameworkCore;
@@ -55,22 +56,57 @@ namespace EmpresaInfrastructura.Repositorios
             }            
         }
 
-        public async Task<List<Usuario>> obtenerPorEmpresaId(Guid empresaId)
+        public async Task<List<UsuarioDTO>> obtenerPorEmpresaId(Guid empresaId)
         {
-            return await _context.Usuarios.Where(u => u.EmpresaId == empresaId).ToListAsync();
+            return await _context.Usuarios.Where(u => u.EmpresaId == empresaId)
+                .Select(u => new UsuarioDTO()
+                {
+                    apellido = u.Apellido,
+                    correoElectronico = u.CorreoElectronico,
+                    empresa = u.Empresa.RazonSocial,
+                    empresaId = u.EmpresaId.ToString(),
+                    id = u.Id.ToString(),
+                    nombre = u.Nombre,
+                    numeroIdentificacion = u.NumeroIdentificacion,
+                    tipoIdentificacion = u.TipoIdentificacion.Descripcion,
+                    tipoIdentificacionId = u.TipoIdentificacionId.ToString()
+                })
+                .ToListAsync();
         }
 
-        public async Task<Usuario> obtenerPorId(Guid id)
+        public async Task<UsuarioDTO> obtenerPorId(Guid id)
         {
             return await _context.Usuarios
-                .Include(u => u.Empresa)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .Select(u => new UsuarioDTO()
+                {
+                    apellido = u.Apellido,
+                    correoElectronico = u.CorreoElectronico,
+                    empresa = u.Empresa.RazonSocial,
+                    empresaId = u.EmpresaId.ToString(),
+                    id = u.Id.ToString(),
+                    nombre = u.Nombre,
+                    numeroIdentificacion = u.NumeroIdentificacion,
+                    tipoIdentificacion = u.TipoIdentificacion.Descripcion,
+                    tipoIdentificacionId = u.TipoIdentificacionId.ToString()
+                }).FirstOrDefaultAsync();
         }
-        public async Task<List<Usuario>> obtenerTodos()
+        public async Task<List<UsuarioDTO>> obtenerTodos()
         {
             return await _context.Usuarios
-                .Include(u => u.Empresa)
+                .Select(u => new UsuarioDTO()
+                {
+                    apellido = u.Apellido,
+                    correoElectronico = u.CorreoElectronico,
+                    empresa = u.Empresa.RazonSocial,
+                    empresaId = u.EmpresaId.ToString(),
+                    id = u.Id.ToString(),
+                    nombre = u.Nombre,
+                    numeroIdentificacion = u.NumeroIdentificacion,
+                    tipoIdentificacion = u.TipoIdentificacion.Descripcion,
+                    tipoIdentificacionId = u.TipoIdentificacionId.ToString()
+                })
                 .ToListAsync();
+
         }
     }
 }

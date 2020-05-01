@@ -1,4 +1,5 @@
-﻿using EmpresaDominio.Entidades.Negocio;
+﻿using EmpresaDominio.Entidades.DTO;
+using EmpresaDominio.Entidades.Negocio;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +10,11 @@ namespace EmpresaDominio.Repositorios
     public interface IUsuarioRepositorio
     {
         Task<Usuario> crear(Usuario modelo);
-        Task<Usuario> obtenerPorId(Guid id);
-        Task<List<Usuario>> obtenerTodos();
+        Task<UsuarioDTO> obtenerPorId(Guid id);
+        Task<List<UsuarioDTO>> obtenerTodos();
         Task<Usuario> actualizar(Usuario modelo);
         Task<bool> eliminar(Guid id);
         Task<bool> existeUsuarioPorEmail(string email);
-        Task<List<Usuario>> obtenerPorEmpresaId(Guid empresaId);
+        Task<List<UsuarioDTO>> obtenerPorEmpresaId(Guid empresaId);
     }
 }

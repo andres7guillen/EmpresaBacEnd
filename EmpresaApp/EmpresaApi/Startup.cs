@@ -62,11 +62,19 @@ namespace EmpresaApi
                     ClockSkew = TimeSpan.Zero
                 });
 
+            services.AddSwaggerGen(config =>
+            {
+                config.SwaggerDoc("V1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Api Seguridad", Version = "V1" });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "EmpresaApi"); });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

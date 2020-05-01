@@ -16,5 +16,7 @@ namespace EmpresaDominio.Entidades.Seguridad
         public string Apellido { get; set; }
         public Guid TipoIdentificacionId { get; set; }
         public Guid EmpresaId { get; set; }
+        [StringLength(30)]
+        public string NumeroIdentificacion { get; set; }
     }
 }

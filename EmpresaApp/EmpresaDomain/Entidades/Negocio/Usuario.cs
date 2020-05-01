@@ -14,6 +14,8 @@ namespace EmpresaDominio.Entidades.Negocio
         public string Apellido { get; set; }
         public Guid TipoIdentificacionId { get; set; }
         public TipoIdentificacion TipoIdentificacion { get; set; }
+        [StringLength(30)]
+        public string NumeroIdentificacion { get; set; }
         [StringLength(100)]
         public string CorreoElectronico { get; set; }
         public Guid EmpresaId { get; set; }

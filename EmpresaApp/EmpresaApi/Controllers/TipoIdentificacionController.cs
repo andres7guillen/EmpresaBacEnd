@@ -22,7 +22,7 @@ namespace EmpresaApi.Controllers
             _tipoIdentificacionServicio = tipoIdentificacionServicio;
         }
 
-        [HttpGet("ObtenerTodos")]
+        [HttpGet("obtenerTodos")]
         [AllowAnonymous]
         public async Task<IActionResult> obtenerTodos()
         {

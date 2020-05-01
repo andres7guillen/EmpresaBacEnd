@@ -62,7 +62,8 @@ namespace EmpresaApi.Controllers
                         CorreoElectronico = model.Email,
                         EmpresaId = model.EmpresaId,
                         Nombre = model.Nombre,
-                        TipoIdentificacionId = model.TipoIdentificacionId
+                        TipoIdentificacionId = model.TipoIdentificacionId,
+                        NumeroIdentificacion = model.NumeroIdentificacion
                     });
                     return Ok(BuildToken(model));
                 }
@@ -103,7 +104,7 @@ namespace EmpresaApi.Controllers
             }            
         }
 
-        [HttpGet("ObtenerTodos")]
+        [HttpGet("obtenerTodos")] 
         public async Task<IActionResult> obtenerTodos()
         {
             try
@@ -126,6 +127,19 @@ namespace EmpresaApi.Controllers
             }            
         }
 
+        [HttpGet("obtenerPorId")]
+        [AllowAnonymous]
+        public async Task<IActionResult> obtenerPorId(string id)
+        {
+            Guid idU = Guid.Parse(id);
+            var usuario = await _usuarioServicio.obtenerPorId(idU);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            return Ok(usuario);
+        }
+
         [HttpGet("obtenerPorEmpresa")]
         public async Task<IActionResult> obtenerPorEmpresa(string id)
         {
@@ -138,6 +152,33 @@ namespace EmpresaApi.Controllers
             else
             {
                 string mensaje = "No hay usuarios asociados a esa empresa";
+                return BadRequest(mensaje);
+            }
+        }
+
+        [HttpDelete("eliminar")]
+        public async Task<IActionResult> eliminar(string id)
+        {
+            Guid idUsuario = Guid.Parse(id);
+            var resultado = await _usuarioServicio.eliminar(idUsuario);
+            if (resultado)
+            {
+                var appUser = await _userManager.FindByIdAsync(id);
+                var result = await _userManager.DeleteAsync(appUser);
+                if (result.Succeeded)
+                {
+                    string mensaje = "Usuario borrado correctamente";
+                    return Ok(mensaje);
+                }
+                else
+                {
+                    string mensaje = "Ocurrio un error al borrar el usario";
+                    return BadRequest(mensaje);
+                }
+            }
+            else
+            {
+                string mensaje = "Ocurrio un error al borrar el usario";
                 return BadRequest(mensaje);
             }
         }

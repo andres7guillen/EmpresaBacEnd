@@ -1,4 +1,5 @@
-﻿using EmpresaDominio.Entidades.Negocio;
+﻿using EmpresaDominio.Entidades.DTO;
+using EmpresaDominio.Entidades.Negocio;
 using EmpresaDominio.Repositorios;
 using EmpresaDominio.Servicios;
 using System;
@@ -24,10 +25,10 @@ namespace EmpresaInfrastructura.Servicios
 
         public async Task<bool> existeUsuarioPorEmail(string email) => await _repositorio.existeUsuarioPorEmail(email);
 
-        public async Task<List<Usuario>> obtenerPorEmpresaId(Guid empresaId) => await _repositorio.obtenerPorEmpresaId(empresaId);
+        public async Task<List<UsuarioDTO>> obtenerPorEmpresaId(Guid empresaId) => await _repositorio.obtenerPorEmpresaId(empresaId);
 
-        public async Task<Usuario> obtenerPorId(Guid id) => await _repositorio.obtenerPorId(id);
+        public async Task<UsuarioDTO> obtenerPorId(Guid id) => await _repositorio.obtenerPorId(id);
 
-        public async Task<List<Usuario>> obtenerTodos() => await _repositorio.obtenerTodos();
+        public async Task<List<UsuarioDTO>> obtenerTodos() => await _repositorio.obtenerTodos();
     }
 }
