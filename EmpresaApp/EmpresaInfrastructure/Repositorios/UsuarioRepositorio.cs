@@ -76,19 +76,20 @@ namespace EmpresaInfrastructura.Repositorios
 
         public async Task<UsuarioDTO> obtenerPorId(Guid id)
         {
-            return await _context.Usuarios
-                .Select(u => new UsuarioDTO()
-                {
-                    apellido = u.Apellido,
-                    correoElectronico = u.CorreoElectronico,
-                    empresa = u.Empresa.RazonSocial,
-                    empresaId = u.EmpresaId.ToString(),
-                    id = u.Id.ToString(),
-                    nombre = u.Nombre,
-                    numeroIdentificacion = u.NumeroIdentificacion,
-                    tipoIdentificacion = u.TipoIdentificacion.Descripcion,
-                    tipoIdentificacionId = u.TipoIdentificacionId.ToString()
-                }).FirstOrDefaultAsync();
+            var usuario = await _context.Usuarios
+                .Include(u => u.TipoIdentificacion)
+                .Include(u => u.Empresa)
+                .FirstOrDefaultAsync(u => u.Id == id);
+            return new UsuarioDTO()
+            {
+                apellido = usuario.Apellido,
+                correoElectronico = usuario.CorreoElectronico,
+                empresa = usuario.Empresa.RazonSocial,
+                id = usuario.Id.ToString(),
+                nombre = usuario.Nombre,
+                numeroIdentificacion = usuario.NumeroIdentificacion,
+                tipoIdentificacion = usuario.TipoIdentificacion.Descripcion
+            };
         }
         public async Task<List<UsuarioDTO>> obtenerTodos()
         {

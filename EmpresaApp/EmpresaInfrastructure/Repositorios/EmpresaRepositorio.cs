@@ -1,9 +1,11 @@
 ﻿using EmpresaData.Context;
+using EmpresaDominio.Entidades.DTO;
 using EmpresaDominio.Entidades.Negocio;
 using EmpresaDominio.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,14 +42,38 @@ namespace EmpresaInfrastructura.Repositorios
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<Empresa> obtenerPorId(Guid id)
+        public async Task<Empresa> obtenerEmpresaPorId(Guid id)
         {
-            return await _context.Empresas.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Empresas
+                .Include(e => e.Usuarios)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<List<Empresa>> obtenerTodos()
+        public async Task<EmpresaDTO> obtenerPorId(Guid id)
         {
-            return await _context.Empresas.ToListAsync();
+            var empresa = await _context.Empresas
+                .Include(e => e.Usuarios)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return new EmpresaDTO()
+            {
+                Id = empresa.Id.ToString(),
+                Nit = empresa.Nit,
+                RazonSocial = empresa.RazonSocial,
+                Usuarios = empresa.Usuarios.Count
+            };                
+        }
+
+        public async Task<List<EmpresaDTO>> obtenerTodos()
+        {
+            return await _context.Empresas
+                .Select(e => new EmpresaDTO()
+                {
+                    Id = e.Id.ToString(),
+                    Nit = e.Nit,
+                    RazonSocial = e.RazonSocial,
+                    Usuarios = e.Usuarios.Count
+                })
+                .ToListAsync();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace EmpresaDominio.Entidades.Seguridad
 {
     public class UserInfo
     {
+        public Guid Id { get; set; }
         public string Email { get; set; }
         public string PassWord { get; set; }
         //Extra
@@ -18,5 +19,6 @@ namespace EmpresaDominio.Entidades.Seguridad
         public Guid EmpresaId { get; set; }
         [StringLength(30)]
         public string NumeroIdentificacion { get; set; }
+        //public string CorreoElectronico { get; set; }
     }
 }

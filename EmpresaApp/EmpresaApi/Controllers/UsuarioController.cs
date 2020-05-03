@@ -39,7 +39,7 @@ namespace EmpresaApi.Controllers
 
         [HttpPost("Crear")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserToken>> createUser([FromBody]UserInfo model)
+        public async Task<ActionResult<UserToken>> crear([FromBody]UserInfo model)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace EmpresaApi.Controllers
                 return BadRequest(e.Message);
                 throw (e);
             }
-        }
+        }        
 
         [HttpPost("Login")]
         [AllowAnonymous]
@@ -152,6 +152,30 @@ namespace EmpresaApi.Controllers
             else
             {
                 string mensaje = "No hay usuarios asociados a esa empresa";
+                return BadRequest(mensaje);
+            }
+        }
+
+        [HttpPut("actualizar")]
+        public async Task<IActionResult> actualizar(UserInfo modelo)
+        {
+            var usuario = await _usuarioServicio.actualizar(new Usuario()
+            {
+                Id = modelo.Id,
+                Apellido = modelo.Apellido,
+                CorreoElectronico = modelo.Email,
+                EmpresaId = modelo.EmpresaId,
+                Nombre = modelo.Nombre,
+                TipoIdentificacionId = modelo.TipoIdentificacionId,
+                NumeroIdentificacion = modelo.NumeroIdentificacion
+            });
+            if (usuario != null)
+            {
+                return Ok(usuario);
+            }
+            else
+            {
+                string mensaje = $"No se pudo actualizar al usuario: {modelo.Nombre} {modelo.Apellido}";
                 return BadRequest(mensaje);
             }
         }

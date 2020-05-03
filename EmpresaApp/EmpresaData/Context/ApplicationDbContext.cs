@@ -21,7 +21,7 @@ namespace EmpresaData.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Empresa>().HasMany(e => e.Usuarios).WithOne(u => u.Empresa);
+            modelBuilder.Entity<Empresa>().HasMany(e => e.Usuarios).WithOne(u => u.Empresa);                
         }
 
     }

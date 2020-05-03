@@ -1,4 +1,5 @@
-﻿using EmpresaDominio.Entidades.Negocio;
+﻿using EmpresaDominio.Entidades.DTO;
+using EmpresaDominio.Entidades.Negocio;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,9 +10,10 @@ namespace EmpresaDominio.Repositorios
     public interface IEmpresaRepositorio
     {
         Task<Empresa> crear(Empresa modelo);
-        Task<List<Empresa>> obtenerTodos();
-        Task<Empresa> obtenerPorId(Guid id);
+        Task<List<EmpresaDTO>> obtenerTodos();
+        Task<EmpresaDTO> obtenerPorId(Guid id);
         Task<Empresa> actualizar(Empresa modelo);
         Task<bool> eliminar(Guid id);
+        Task<Empresa> obtenerEmpresaPorId(Guid id);
     }
 }

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using EmpresaApi.Models;
 using EmpresaDominio.Entidades.Negocio;
+using EmpresaDominio.Entidades.Seguridad;
 using EmpresaDominio.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmpresaApi.Controllers
@@ -18,9 +20,11 @@ namespace EmpresaApi.Controllers
     public class EmpresaController : ControllerBase
     {
         private readonly IEmpresaServicio _empresaServicio;
-        public EmpresaController(IEmpresaServicio empresaServicio)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public EmpresaController(IEmpresaServicio empresaServicio, UserManager<ApplicationUser> userManager)
         {
             _empresaServicio = empresaServicio;
+            _userManager = userManager;
         }
 
 
@@ -29,7 +33,7 @@ namespace EmpresaApi.Controllers
         {
             var empresa = await _empresaServicio.crear(new Empresa()
             {
-                Id = Guid.Parse(model.Id),
+                Id = model.Id != null ? Guid.Parse(model.Id) : Guid.NewGuid(),
                 Nit = model.Nit,
                 RazonSocial = model.RazonSocial                
             });
@@ -73,19 +77,29 @@ namespace EmpresaApi.Controllers
         [HttpPut("actualizar")]
         public async Task<IActionResult> actualizar([FromBody] EmpresaModel model)
         {
-            var empresa = await _empresaServicio.actualizar(new Empresa()
+            if (ModelState.IsValid)
             {
-                Id = Guid.Parse(model.Id),
-                Nit = model.Nit,
-                RazonSocial = model.RazonSocial
-            });
-            if (empresa != null)
-            {
-                return Ok(empresa);
+                var empresa = await _empresaServicio.actualizar(new Empresa()
+                {
+                    Id = Guid.Parse(model.Id),
+                    Nit = model.Nit,
+                    RazonSocial = model.RazonSocial
+                });
+                if (empresa != null)
+                {
+                    return Ok(empresa);
+                }
+                else
+                {
+                    return BadRequest("Error creando la empresa");
+                }
             }
             else
             {
-                return BadRequest("Error creando la empresa");
+                string mensaje = string.Join("; ", ModelState.Values
+                                        .SelectMany(x => x.Errors)
+                                        .Select(x => x.ErrorMessage));
+                return BadRequest(mensaje);
             }
         }
 
@@ -93,6 +107,12 @@ namespace EmpresaApi.Controllers
         public async Task<IActionResult> eliminar(string id)
         {
             Guid idEmpresa = Guid.Parse(id);
+            var empresa = await _empresaServicio.obtenerEmpresaPorId(idEmpresa);
+            foreach (var usuario in empresa.Usuarios)
+            {
+                var usuarioDelete = await _userManager.FindByIdAsync(usuario.Id.ToString());
+                await _userManager.DeleteAsync(usuarioDelete);
+            }            
             var resultado = await _empresaServicio.eliminar(idEmpresa);
             if (resultado)
             {
